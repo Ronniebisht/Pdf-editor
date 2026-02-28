@@ -13,11 +13,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - uses: android-actions/setup-android@v3
-      - run: |
-          mkdir -p gradle/wrapper
-          curl -L "https://github.com/gradle/gradle/raw/v8.5.0/gradle/wrapper/gradle-wrapper.jar" -o gradle/wrapper/gradle-wrapper.jar
-      - run: chmod +x gradlew
-      - run: ./gradlew assembleDebug --stacktrace
+      - name: Setup Gradle
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          export PATH=$PWD/gradle-8.5/bin:$PATH
+          echo "PATH=$PWD/gradle-8.5/bin:$PATH" >> $GITHUB_ENV
+      - name: Build APK
+        run: gradle assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: PDFEditor-debug
